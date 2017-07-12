@@ -40,6 +40,7 @@
   ec2_ami_find:
     region: '{{ origin_ci_aws_region }}'
     ami_tags:
+      Name: '{{ origin_ci_aws_ami_name }}'
       operating_system: '{{ origin_ci_aws_ami_os }}'
       image_stage: '{{ origin_ci_aws_ami_stage }}'
       ready: 'yes'
@@ -53,6 +54,10 @@
     origin_ci_aws_ami_id: '{{ item.ami_id }}'
   with_items: '{{ ami_facts.results }}'
   when: "'qe' not in item.tags or origin_ci_aws_ami_stage == 'fork'"
+
+- assert:
+    that: origin_ci_aws_ami_id is defined
+    msg: "Failed to find AMI instance matching the given tags."
 
 - name: determine which subnets are available
   ec2_vpc_subnet_facts:

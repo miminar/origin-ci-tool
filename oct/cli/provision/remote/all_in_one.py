@@ -66,7 +66,7 @@ most useful for short-term development work-flows.
 
 \b
 Examples:
-  Provision a VM with default parameters (fedora, aws, install)
+  Provision a VM with default parameters (fedora, aws, install, fork)
   $ oct provision remote all-in-one
 \b
   Provision a VM with custom parameters
@@ -107,11 +107,17 @@ Examples:
         Stage.base,
         Stage.build,
         Stage.install,
+        Stage.fork,
     ]),
     default=Stage.install,
     show_default=True,
     metavar='NAME',
     help='VM image stage.',
+)
+@option(
+    '--ami-name',
+    metavar='AMI_NAME',
+    help='AMI image name',
 )
 @option(
     '--name',
@@ -131,7 +137,7 @@ Examples:
 @discrete_ssh_config_option
 @ansible_output_options
 @pass_context
-def all_in_one_command(context, operating_system, provider, stage, name, discrete_ssh_config):
+def all_in_one_command(context, operating_system, provider, stage, ami_name, name, discrete_ssh_config):
     """
     Provision a virtual host for an All-In-One deployment.
 
@@ -144,7 +150,7 @@ def all_in_one_command(context, operating_system, provider, stage, name, discret
     """
     configuration = context.obj
     if provider == Provider.aws:
-        provision_with_aws(configuration, operating_system, stage, name, discrete_ssh_config)
+        provision_with_aws(configuration, operating_system, stage, ami_name, name, discrete_ssh_config)
 
 
 def destroy(configuration):
@@ -156,7 +162,7 @@ def destroy(configuration):
     configuration.run_playbook(playbook_relative_path='provision/aws_all_in_one_down', )
 
 
-def provision_with_aws(configuration, operating_system, stage, name, discrete_ssh_config):
+def provision_with_aws(configuration, operating_system, stage, ami_name, name, discrete_ssh_config):
     """
     Provision a VM in the cloud using AWS EC2.
 
@@ -179,6 +185,7 @@ def provision_with_aws(configuration, operating_system, stage, name, discrete_ss
             'origin_ci_aws_hostname': configuration.next_available_vagrant_name,  # TODO: fix this
             'origin_ci_aws_ami_os': operating_system,
             'origin_ci_aws_ami_stage': stage,
+            'origin_ci_aws_ami_name': ami_name,
             'origin_ci_aws_instance_name': name,
             'origin_ci_inventory_dir': configuration.ansible_client_configuration.host_list,
             'origin_ci_aws_keypair_name': configuration.aws_client_configuration.keypair_name,

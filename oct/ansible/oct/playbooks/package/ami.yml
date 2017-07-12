@@ -36,6 +36,7 @@
       set_fact:
         origin_ci_aws_ami_os: "{{ hostvars[origin_ci_aws_hostname]['origin_ci_aws_ami_os'] }}"
         origin_ci_aws_ami_stage: "{{ hostvars[origin_ci_aws_hostname]['origin_ci_aws_ami_stage'] }}"
+        origin_ci_aws_ami_name: "{{ hostvars[origin_ci_aws_hostname]['origin_ci_aws_ami_name'] }}"
         origin_ci_aws_instance_id: "{{ hostvars[origin_ci_aws_hostname]['origin_ci_aws_instance_id'] }}"
         origin_ci_aws_instance_name: "{{ hostvars[origin_ci_aws_hostname]['origin_ci_aws_instance_name'] }}"
 
